@@ -19,8 +19,10 @@ import android.os.Message;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -49,12 +51,19 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 	private GridView mFontGridView = null;
 	private ImageLoader imageLoader = null;
 	DisplayImageOptions options;
+	
+//	private sha
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
+        
+        SharedPreferences mSharedPreferences = getPreferences(MODE_PRIVATE);
+        boolean isShowHelp = mSharedPreferences.getBoolean("isShowHelp", true);
+        showHelpDialog(isShowHelp);
+        
         log("onCreate");
         if(null == imageLoader)imageLoader = ImageLoader.getInstance();
         imageLoader.init(ImageLoaderConfiguration.createDefault(MiActivity.this));
@@ -262,6 +271,13 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 				}
 			}
 		}).start();
+	}
+	
+	public void showHelpDialog(boolean isShowHelp){
+		if(isShowHelp){
+			Intent help = new Intent(mContext, HelpActivity.class);
+			startActivity(help);
+		}
 	}
 	
 	private void log(String logs){

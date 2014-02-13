@@ -3,13 +3,12 @@
 
     <string name="app_name">小米字体下载器</string>
     <string name="action_settings">刷新</string>
-    
     <string name="font_start_download">Start DownLoad</string>
     <string name="font_download_error">DownLoad Error!</string>
-    
     <string name="button_start_download">Start DownLoad</string>
     <string name="button_pres_download">Press DownLoad</string>
-    
     <string name="help">下载完主题后，进入主题管理，选择从SD卡导入主题，选择刚刚下载的字体(.mtz)文件导入，然后进入混搭，设置自己喜欢的字体吧！</string>
+    <string name="title_activity_help">HelpActivity</string>
+    <string name="hello_world">Hello world!</string>
 
 </resources>
