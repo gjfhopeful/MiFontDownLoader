@@ -28,6 +28,7 @@
         android:id="@+id/font_progress"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
+        android:visibility="invisible"
         android:layout_height="@dimen/font_grid_view_font_height"
         android:layout_alignLeft="@+id/font_pre"
         android:layout_below="@id/font_pre" />
