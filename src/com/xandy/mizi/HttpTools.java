@@ -11,13 +11,12 @@ import org.jsoup.select.Elements;
 
 import android.util.Log;
 
-
-
 public class HttpTools {
 	
 	private static boolean DEBUG = true;
 	private static final String TAG = "HttpTools";
 	
+	public static final String DownLoadDir = "MiFont";
 	public static final String BaseURL = "http://zhuti.xiaomi.com";
 	public static final String FontURLSort = "&sort=";
 	public static int FontPageMAX = 13;

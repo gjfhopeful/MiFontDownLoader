@@ -2,23 +2,14 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="20dp"
-    android:layout_marginRight="20dp" >
+    android:layout_marginLeft="@dimen/font_grid_view_margeen"
+    android:layout_marginRight="@dimen/font_grid_view_margeen" >
+    
     <ImageView 
         android:id="@+id/font_detail_icon"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
+        android:layout_height="@dimen/font_detail_view_image_height"
         android:src="@drawable/ic_launcher" />
-
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="5dp"
-    	android:layout_marginRight="5dp"
-        android:layout_alignLeft="@+id/font_detail_icon"
-        android:layout_below="@id/font_detail_icon" />
 
     <Button
         android:id="@+id/down"
@@ -26,7 +17,7 @@
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/progressBar"
+        android:layout_below="@+id/font_detail_icon"
         android:text="Button" />
 
 </RelativeLayout>

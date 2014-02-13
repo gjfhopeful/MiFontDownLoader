@@ -4,5 +4,11 @@
     <string name="app_name">MiZi</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    
+    <string name="font_start_download">Start DownLoad</string>
+    <string name="font_download_error">DownLoad Error!</string>
+    
+    <string name="button_start_download">Start DownLoad</string>
+    <string name="button_pres_download">Press DownLoad</string>
 
 </resources>

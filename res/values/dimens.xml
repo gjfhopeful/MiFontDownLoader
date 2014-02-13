@@ -9,5 +9,9 @@
     <dimen name="font_grid_view_image_height">40dp</dimen>
     <dimen name="font_grid_view_font_height">20dp</dimen>
     <dimen name="font_grid_view_margeen">10dp</dimen>
+    
+    <!-- Default screen margins, per the Android Design guidelines. -->
+    <dimen name="font_detail_view_image_height">200dp</dimen>
+    <dimen name="font_detail_view_margeen">20dp</dimen>
 
 </resources>

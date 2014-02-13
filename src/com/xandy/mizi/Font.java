@@ -2,9 +2,10 @@ package com.xandy.mizi;
 
 public class Font {
 	
-	private String FontURL;
-	private String FontName;
-	private String FontImgURL;
+	private String FontURL = "";
+	private String FontName = "";
+	private String FontImgURL = "";
+	private boolean isDownLoading = false;
 	
 	public String getFontDetail(){
 		return "name:" + FontName + " | img:"  + FontImgURL + " | download:" + FontURL;
@@ -36,6 +37,14 @@ public class Font {
 
 	public void setFontImgURL(String fontImgURL) {
 		FontImgURL = fontImgURL;
+	}
+
+	public boolean isDownLoading() {
+		return isDownLoading;
+	}
+
+	public void setDownLoading(boolean isDownLoading) {
+		this.isDownLoading = isDownLoading;
 	}
 	
 }
