@@ -29,8 +29,12 @@ public class HttpTools {
 		return BaseURL + "/font?page=" + page + FontURLSort + (isHot ? "Hot" : "New");
 	}
 	
-	public static String getFontDownLoad(String font){
-		return BaseURL + font;
+//	public static String getFontDownLoad(String font){
+//		return BaseURL + font;
+//	}
+	
+	public static String getFontDownLoad(Font font){
+		return BaseURL + font.getFontURL().replace("detail", "download");
 	}
 
 	public static List<Font> getFonts(int page , boolean isHot){
@@ -52,7 +56,7 @@ public class HttpTools {
 				font.setFontName(Img.attr("alt"));
 				font.setFontImgURL(Img.attr("data-src"));
 				font.setFontURL(Url.attr("href"));
-				log(font.getFontDetail());
+				log(font.getFontDetailString());
 				mFont.add(font);
 			}
 		} catch (IOException e) {
@@ -66,7 +70,7 @@ public class HttpTools {
 		String url = "";
 		Document doc = null;
 		try {
-			log(font.getFontDetail());
+			log(font.getFontDetailString());
 //			doc = Jsoup.connect("http://zhuti.xiaomi.com/detail/af7ac489-e9f9-46a5-b534-89f073c921c8").get();
 			doc = Jsoup.connect(BaseURL + font.getFontURL() ).get();
 			Element mMain = doc.getElementById("main");

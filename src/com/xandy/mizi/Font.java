@@ -7,7 +7,7 @@ public class Font {
 	private String FontImgURL = "";
 	private boolean isDownLoading = false;
 	
-	public String getFontDetail(){
+	public String getFontDetailString(){
 		return "name:" + FontName + " | img:"  + FontImgURL + " | download:" + FontURL;
 	}
 	

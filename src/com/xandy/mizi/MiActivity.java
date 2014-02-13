@@ -10,6 +10,7 @@ import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
 import com.xandy.mizi.network.DownloadProgressListener;
 import com.xandy.mizi.network.FileDownloader;
 
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +20,7 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -71,6 +73,15 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
         mFontGridView.setAdapter(mFontAdapter);
         mFontGridView.setOnItemClickListener(this);
         
+        Thread httpThread = new Thread(new Runnable() {
+        	@Override
+        	public void run() {
+        		log("start get font grid data");
+        		mFonts.clear();
+        		mFonts = HttpTools.getFonts(1, true);
+        		mHandler.sendEmptyMessage(GET_FONT_URL);
+        	}
+        });
         httpThread.start();
     }
 
@@ -111,18 +122,12 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 				mHandleView = (HandleView) view.getTag();
 			}
 			Font font = mFonts.get(index);
+			log("show font : " + font.getFontDetailString());
 			if(font.isDownLoading()){
 				//update progressBar
 				download(mHandleView.fontProgressBar,
-						HttpTools.getFontDownLoad(font.getFontURL()),
+						HttpTools.getFontDownLoad(font),
 						Environment.getExternalStorageDirectory()+HttpTools.DownLoadDir);
-//				Message msg = new Message();
-//				msg.what = UPDATE_PROGRESSBAR;
-//				msg.obj = mHandleView.fontProgressBar;
-//				Bundle data = new Bundle();
-//				data.putString("path", HttpTools.getFontDownLoad(font.getFontURL()));
-//				msg.setData(data);
-//				mHandler.sendMessage(msg);
 			}
 			mHandleView.fontName.setText(font.getFontName());
 			
@@ -130,23 +135,13 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 			return view;
 		}
     	
-    }
-    class HandleView {
-    	ImageView fontImg ;
-    	TextView fontName ;
-    	ProgressBar fontProgressBar;
+		class HandleView {
+			ImageView fontImg ;
+			TextView fontName ;
+			ProgressBar fontProgressBar;
+		}
     }
     
-    Thread httpThread = new Thread(new Runnable() {
-		
-		@Override
-		public void run() {
-			// TODO Auto-generated method stub
-			mFonts.clear();
-			mFonts = HttpTools.getFonts(1, true);
-			mHandler.sendEmptyMessage(GET_FONT_URL);
-		}
-	});
     
     private List<Font> mFonts = new ArrayList<Font>();
     private final int GET_FONT_URL = 100000;
@@ -193,20 +188,22 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 		if(null == alert){
 			LayoutInflater flater = LayoutInflater.from(this);
 			View view = flater.inflate(R.layout.font_detail_view, null);
-			fontDetail = (ImageView)view.findViewById(R.id.font_detail_icon);
-			mDown = (Button)view.findViewById(R.id.down);
+			fontDetail = (ImageView) view.findViewById(R.id.font_detail_icon);
+			mDown = (Button) view.findViewById(R.id.down);
 			mDown.setOnClickListener(this);
 			AlertDialog.Builder builder = new AlertDialog.Builder(mContext); 
 			builder.setView(view);
 			alert = builder.create(); 
 		}
 		mDown.setText(font.isDownLoading()?R.string.button_pres_download:R.string.button_start_download);
-		mDown.setTag(id);
+//		mDown.setTag(id);
+		mDown.setTag(HttpTools.getFontDownLoad(font));
+//		mDown.setHint(HttpTools.getFontDownLoad(font));
 		Runnable m = new Runnable() {
 			@Override
 			public void run() {
 				String imgUrl = HttpTools.getFontDetailImgUrl(font);
-				Log.d("test", imgUrl);
+				log( imgUrl);
 				mHandler.sendMessage(Message.obtain(mHandler, SET_DETAIL_IMG, imgUrl));
 			}
 		};
@@ -220,10 +217,14 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 		if(view.getId() == R.id.down){
 			mHandler.sendMessage(new Message().obtain(mHandler,DOWN_FONT_START , 0, 0));
 			if(alert.isShowing())alert.dismiss();
-			int id = (Integer) ((Button)view).getTag();
-			Font font = mFonts.get(id);
-			font.setDownLoading(true);
-			mFonts.set(id, font);
+			Uri uri = Uri.parse(((Button)view).getTag().toString());  
+            Intent intent = new Intent(Intent.ACTION_VIEW, uri);  
+            startActivity(intent); 
+//			int id = (Integer) ((Button)view).getTag();
+//			Font font = mFonts.get(id);
+//			font.setDownLoading(true);
+//			mFonts.set(id, font);
+//			mFontAdapter.notifyDataSetChanged();
 		}
 	}
     
@@ -238,7 +239,10 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 		new Thread(new Runnable() {			
 			@Override
 			public void run() {
+				log("Strat downLoad " + path);
 				//开启3个线程进行下载
+				File mFile = new File(savedir);
+				if(!mFile.exists()) mFile.mkdirs();
 				FileDownloader loader = new FileDownloader(mContext, path, new File(savedir), 3);
 				progressBar.setMax(loader.getFileSize());//设置进度条的最大刻度为文件的长度
 				final Message msg = new Message();
