@@ -1,31 +1,21 @@
 package com.xandy.mizi;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.xandy.mizi.network.DownloadProgressListener;
-import com.xandy.mizi.network.FileDownloader;
-
-import android.net.Uri;
-import android.os.Build;
-import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.Message;
-import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -39,7 +29,11 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
-@TargetApi(Build.VERSION_CODES.HONEYCOMB)
+import com.nostra13.universalimageloader.core.DisplayImageOptions;
+import com.nostra13.universalimageloader.core.ImageLoader;
+import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.xandy.mizi.R.id;
+
 public class MiActivity extends Activity implements OnItemClickListener,OnClickListener{
 	
 	private boolean DEBUG = true;
@@ -50,18 +44,12 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 	private GridView mFontGridView = null;
 	private ImageLoader imageLoader = null;
 	DisplayImageOptions options;
-	
-//	private sha
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         mContext = this;
-        
-        SharedPreferences mSharedPreferences = getPreferences(MODE_PRIVATE);
-        boolean isShowHelp = mSharedPreferences.getBoolean("isShowHelp", true);
-        showHelpDialog(isShowHelp);
         
         log("onCreate");
         if(null == imageLoader)imageLoader = ImageLoader.getInstance();
@@ -80,26 +68,92 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
         mFontAdapter = new FontAdapter();
         mFontGridView.setAdapter(mFontAdapter);
         mFontGridView.setOnItemClickListener(this);
-        
-        Thread httpThread = new Thread(new Runnable() {
-        	@Override
-        	public void run() {
-        		log("start get font grid data");
-        		mFonts.clear();
-        		mFonts = HttpTools.getFonts(1, true);
-        		mHandler.sendEmptyMessage(GET_FONT_URL);
-        	}
-        });
-        httpThread.start();
+        getFons();
+    }
+    
+    private int pageid = 1;
+    private boolean isHot = true;
+    public void getFons(){
+    	Thread httpThread = new Thread(new Runnable() {
+    		@Override
+    		public void run() {
+    			log("start get font grid data");
+    			mFonts.clear();
+    			mFonts = HttpTools.getFonts(pageid, isHot);
+    			mHandler.sendEmptyMessage(GET_FONT_URL);
+    		}
+    	});
+    	httpThread.start();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
+        
+//        MenuItem lastPage = menu.getItem(0);
+//        lastPage.setEnabled(1 != pageid);
+//        
+//        MenuItem nextPage = menu.getItem(1);
+//        nextPage.setEnabled(13 != pageid);
+//        
+//        MenuItem New = menu.getItem(2);
+//        New.setVisible(isHot);
+//        
+//        MenuItem Hot = menu.getItem(3);
+//        Hot.setVisible(!isHot);
+        
         return true;
     }
     
-    class FontAdapter extends BaseAdapter{
+    
+    
+    @Override
+	public boolean onPrepareOptionsMenu(Menu menu) {
+		// TODO Auto-generated method stub
+    	menu.clear();
+    	getMenuInflater().inflate(R.menu.main, menu);
+        
+        MenuItem lastPage = menu.getItem(0);
+        lastPage.setEnabled(1 != pageid);
+        
+        MenuItem nextPage = menu.getItem(1);
+        nextPage.setEnabled(13 != pageid);
+        
+        MenuItem Hot = menu.getItem(2);
+        Hot.setVisible(!isHot);
+        
+        MenuItem New = menu.getItem(3);
+        New.setVisible(isHot);
+		return super.onPrepareOptionsMenu(menu);
+	}
+
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		// TODO Auto-generated method stub
+//    	Toast.makeText(mContext, "getItemId:"+item.getItemId()+" getOrder:"+item.getOrder(), Toast.LENGTH_SHORT).show();
+    	switch (item.getOrder()) {
+		case 100:
+			pageid--;
+			break;
+		case 101:
+			pageid++;
+			break;
+		case 102:
+			isHot = true;
+			break;
+		case 103:
+			isHot = false;
+			break;
+		default:
+			break;
+		}
+    	getFons();
+		return super.onOptionsItemSelected(item);
+	}
+
+
+
+	class FontAdapter extends BaseAdapter{
     	
 		@Override
 		public int getCount() {
@@ -133,9 +187,6 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 			log("show font : " + font.getFontDetailString());
 			if(font.isDownLoading()){
 				//update progressBar
-				download(mHandleView.fontProgressBar,
-						HttpTools.getFontDownLoad(font),
-						Environment.getExternalStorageDirectory()+HttpTools.DownLoadDir);
 			}
 			mHandleView.fontName.setText(font.getFontName());
 			
@@ -204,9 +255,7 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 			alert = builder.create(); 
 		}
 		mDown.setText(font.isDownLoading()?R.string.button_pres_download:R.string.button_start_download);
-//		mDown.setTag(id);
 		mDown.setTag(HttpTools.getFontDownLoad(font));
-//		mDown.setHint(HttpTools.getFontDownLoad(font));
 		Runnable m = new Runnable() {
 			@Override
 			public void run() {
@@ -228,54 +277,6 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 			Uri uri = Uri.parse(((Button)view).getTag().toString());  
             Intent intent = new Intent(Intent.ACTION_VIEW, uri);  
             startActivity(intent); 
-//			int id = (Integer) ((Button)view).getTag();
-//			Font font = mFonts.get(id);
-//			font.setDownLoading(true);
-//			mFonts.set(id, font);
-//			mFontAdapter.notifyDataSetChanged();
-		}
-	}
-    
-	/**
-  	 * ���߳�(UI�߳�)
-  	 * ������ʾ�ؼ��Ľ������ֻ����UI�̸߳���������ڷ�UI�̸߳��¿ؼ�������ֵ�����º����ʾ���治�ᷴӳ����Ļ��
-  	 * ������ø��º����ʾ���淴ӳ����Ļ�ϣ���Ҫ��Handler���á�
-  	 * @param path
-  	 * @param savedir
-  	 */
-	private void download(final ProgressBar progressBar,final String path, final String savedir) {
-		new Thread(new Runnable() {			
-			@Override
-			public void run() {
-				log("Strat downLoad " + path);
-				//����3���߳̽�������
-				File mFile = new File(savedir);
-				if(!mFile.exists()) mFile.mkdirs();
-				FileDownloader loader = new FileDownloader(mContext, path, new File(savedir), 3);
-				progressBar.setMax(loader.getFileSize());//���ý���������̶�Ϊ�ļ��ĳ���
-				final Message msg = new Message();
-				msg.obj = progressBar;
-				try {
-					loader.download(new DownloadProgressListener() {
-						@Override
-						public void onDownloadSize(int size) {//ʵʱ��֪�ļ��Ѿ����ص���ݳ���
-							msg.what = UPDATE_PROGRESSBAR;
-							msg.getData().putInt("size", size);
-							mHandler.sendMessage(msg);//������Ϣ
-						}
-					});
-				} catch (Exception e) {
-					msg.what = DOWN_FONT_ERROR;
-					mHandler.sendMessage(msg);
-				}
-			}
-		}).start();
-	}
-	
-	public void showHelpDialog(boolean isShowHelp){
-		if(isShowHelp){
-			Intent help = new Intent(mContext, HelpActivity.class);
-			startActivity(help);
 		}
 	}
 	

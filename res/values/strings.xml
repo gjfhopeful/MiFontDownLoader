@@ -3,6 +3,10 @@
 
     <string name="app_name">小米字体下载器</string>
     <string name="action_settings">刷新</string>
+    <string name="action_last">上一页</string>
+    <string name="action_next">下一页</string>
+    <string name="action_hot">最热</string>
+    <string name="action_new">最新</string>
     <string name="font_start_download">开始下载</string>
     <string name="font_download_error">下载出错</string>
     <string name="button_start_download">开始下载</string>
@@ -20,5 +24,8 @@
         <item>进入混搭模式后选择字体</item>
         <item>是不是有刚刚选择的字体，赶快试试吧</item>
     </string-array>
+    
+    <string name="help_notshow">不在显示！</string>
+    <string name="help_sure">确定</string>
 
 </resources>

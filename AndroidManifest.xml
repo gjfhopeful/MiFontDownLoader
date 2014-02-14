@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.xandy.mizi"
     android:versionCode="1"
-    android:versionName="1.0" >
+    android:versionName="1.2" >
 
     <uses-sdk
         android:minSdkVersion="7"
@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.xandy.mizi.HelpActivityMiActivity"
+            android:name="com.xandy.mizi.MiActivity"
             android:label="@string/title_activity_help" >
         </activity>
     </application>

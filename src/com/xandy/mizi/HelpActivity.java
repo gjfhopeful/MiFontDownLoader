@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -44,6 +47,11 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_help);
 		
+		Intent data = getIntent();
+		boolean needShowHelp = data.getBooleanExtra("needShowHelp", false);
+		if(!needShowHelp) isShowHelp();
+		
+		
 		mHelps = new ArrayList<ImageView>();
 		imageViews = new ImageView[helpSrcId.length];	
 		viewPoints = (LinearLayout) findViewById(R.id.viewPoints);
@@ -68,17 +76,12 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 		mViewPager.setAdapter(new MPageAdapter());
 		mViewPager.setOnPageChangeListener(this);
 		mCheckBox = (CheckBox) findViewById(R.id.notshow);
+		mCheckBox.setOnClickListener(this);
 		mButton = (Button) findViewById(R.id.next);
 		mButton.setOnClickListener(this);
 		
-		viewPoints = (LinearLayout) findViewById(R.id.viewPoints);
-	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.help, menu);
-		return true;
+		mViewPager.setCurrentItem(0);
+		updateUI(0);
 	}
 	
 	class MPageAdapter extends PagerAdapter{
@@ -105,10 +108,40 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 		}
 		
 	}
+	
+	private void isShowHelp(){
+		SharedPreferences mSharedPreferences = getPreferences(MODE_PRIVATE);
+		boolean neverShowHelp = mSharedPreferences.getBoolean("nrverShowHelp", false);
+		if(neverShowHelp){
+			finish();
+			Intent mIntent = new Intent(getApplicationContext(), MiActivity.class);
+			startActivity(mIntent);
+		}
+	}
+	
+	private void saveCheckState(){
+		SharedPreferences mSharedPreferences = getPreferences(MODE_PRIVATE);
+		SharedPreferences.Editor mEditor = mSharedPreferences.edit();
+		mEditor.putBoolean("nrverShowHelp", mCheckBox.isSelected());
+		mEditor.commit();
+	}
 
 	@Override
 	public void onClick(View v) {
-		finish();
+		int id = v.getId();
+		switch (id) {
+		case R.id.next:
+			finish();
+			Intent mIntent = new Intent(getApplicationContext(), MiActivity.class);
+			startActivity(mIntent);
+			break;
+		case R.id.notshow:
+			saveCheckState();
+			break;
+		default:
+			break;
+		}
+		
 	}
 
 	@Override
@@ -123,15 +156,22 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 
 	@Override
 	public void onPageSelected(int position) {
+		updateUI(position);
+	}
+	
+	public void updateUI(int position){
 		mCheckBox.setVisibility( position == mHelps.size()-1 ? View.VISIBLE : View.GONE);
 		mButton.setVisibility( position == mHelps.size()-1 ? View.VISIBLE : View.GONE);
-		Toast.makeText(getApplicationContext(), mHelpTips[position], Toast.LENGTH_SHORT).show();
+		Toast toast = Toast.makeText(getApplicationContext(), mHelpTips[position], Toast.LENGTH_SHORT);
+		toast.setGravity(Gravity.TOP , 0, 250);
+		toast.show();
 		for (int i = 0; i < mHelps.size(); i++) {  
-        	ImageView img = imageViews[i];
-        	img.setBackgroundResource((R.drawable.circle_ucimg));
+			ImageView img = imageViews[i];
+			img.setBackgroundResource((R.drawable.circle_ucimg));
 			if( position == i) img.setBackgroundResource((R.drawable.circle_cimg));
-        }
-		viewPoints.setVisibility( position == mHelps.size()-1 ? View.GONE : View.VISIBLE);
+		}
+		viewPoints.setVisibility( position == mHelps.size()-1 ? View.INVISIBLE : View.VISIBLE);
+		
 	}
 
 }
