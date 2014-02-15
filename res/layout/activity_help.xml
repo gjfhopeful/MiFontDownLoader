@@ -2,10 +2,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".HelpActivity" >
 
     <android.support.v4.view.ViewPager
@@ -18,7 +17,7 @@
     <LinearLayout
         android:id="@+id/viewPoints"
         android:layout_width="fill_parent"
-        android:layout_height="20dp"
+        android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:gravity="center"
         android:orientation="horizontal" />
@@ -26,16 +25,17 @@
     <LinearLayout
         android:id="@+id/okView"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
+        android:layout_below="@id/help"
         android:layout_alignParentBottom="true" >
 
         <CheckBox
-            android:id="@+id/notshow"
+            android:id="@+id/nervershow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_above="@+id/next"
             android:layout_centerHorizontal="true"
-            android:text=""
+            android:text="@string/help_nervershow"
             android:visibility="visible" />
 
         <Button
@@ -43,7 +43,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:text="next"
+            android:text="@string/help_sure"
             android:visibility="visible" />
     </LinearLayout>
 

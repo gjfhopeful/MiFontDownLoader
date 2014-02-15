@@ -11,7 +11,6 @@ import android.support.v4.view.PagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v4.view.ViewPager.OnPageChangeListener;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
@@ -75,7 +74,7 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 		mViewPager = (ViewPager) findViewById(R.id.help);
 		mViewPager.setAdapter(new MPageAdapter());
 		mViewPager.setOnPageChangeListener(this);
-		mCheckBox = (CheckBox) findViewById(R.id.notshow);
+		mCheckBox = (CheckBox) findViewById(R.id.nervershow);
 		mCheckBox.setOnClickListener(this);
 		mButton = (Button) findViewById(R.id.next);
 		mButton.setOnClickListener(this);
@@ -111,18 +110,21 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 	
 	private void isShowHelp(){
 		SharedPreferences mSharedPreferences = getPreferences(MODE_PRIVATE);
-		boolean neverShowHelp = mSharedPreferences.getBoolean("nrverShowHelp", false);
+		boolean neverShowHelp = mSharedPreferences.getBoolean("nerverShowHelp", false);
 		if(neverShowHelp){
-			finish();
 			Intent mIntent = new Intent(getApplicationContext(), MiActivity.class);
 			startActivity(mIntent);
+			finish();
 		}
 	}
 	
 	private void saveCheckState(){
 		SharedPreferences mSharedPreferences = getPreferences(MODE_PRIVATE);
 		SharedPreferences.Editor mEditor = mSharedPreferences.edit();
-		mEditor.putBoolean("nrverShowHelp", mCheckBox.isSelected());
+		mEditor.putBoolean("nerverShowHelp", mCheckBox.isChecked());
+//		Toast toast = Toast.makeText(getApplicationContext(), mCheckBox.isChecked()+"", Toast.LENGTH_SHORT);
+//		toast.setGravity(Gravity.TOP , 0, 250);
+//		toast.show();
 		mEditor.commit();
 	}
 
@@ -135,7 +137,7 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 			Intent mIntent = new Intent(getApplicationContext(), MiActivity.class);
 			startActivity(mIntent);
 			break;
-		case R.id.notshow:
+		case R.id.nervershow:
 			saveCheckState();
 			break;
 		default:

@@ -90,40 +90,51 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         
-//        MenuItem lastPage = menu.getItem(0);
+//        lastPage = menu.getItem(0);
 //        lastPage.setEnabled(1 != pageid);
 //        
-//        MenuItem nextPage = menu.getItem(1);
+//        nextPage = menu.getItem(1);
 //        nextPage.setEnabled(13 != pageid);
 //        
-//        MenuItem New = menu.getItem(2);
+//        New = menu.getItem(2);
 //        New.setVisible(isHot);
 //        
-//        MenuItem Hot = menu.getItem(3);
+//        Hot = menu.getItem(3);
 //        Hot.setVisible(!isHot);
         
         return true;
     }
     
+    private MenuItem lastPage;
+    private MenuItem nextPage;
+    private MenuItem Hot;
+    private MenuItem New;
     
+    public void updateMenuUi(){
+    	lastPage.setEnabled(1 != pageid);
+    	nextPage.setEnabled(13 != pageid);
+    	Hot.setVisible(!isHot);
+    	New.setVisible(isHot);
+    }
     
     @Override
 	public boolean onPrepareOptionsMenu(Menu menu) {
-		// TODO Auto-generated method stub
+//		// TODO Auto-generated method stub
     	menu.clear();
     	getMenuInflater().inflate(R.menu.main, menu);
-        
-        MenuItem lastPage = menu.getItem(0);
+//        
+    	MenuItem lastPage = menu.getItem(0);
         lastPage.setEnabled(1 != pageid);
-        
+//        
         MenuItem nextPage = menu.getItem(1);
         nextPage.setEnabled(13 != pageid);
-        
+//        
         MenuItem Hot = menu.getItem(2);
         Hot.setVisible(!isHot);
-        
+//        
         MenuItem New = menu.getItem(3);
         New.setVisible(isHot);
+//        
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -134,20 +145,29 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
     	switch (item.getOrder()) {
 		case 100:
 			pageid--;
+			getFons();
 			break;
 		case 101:
 			pageid++;
+			getFons();
 			break;
 		case 102:
 			isHot = true;
+			getFons();
 			break;
 		case 103:
 			isHot = false;
+			getFons();
+			break;
+		case 105:
+			Intent mIntent = new Intent(getApplicationContext(), HelpActivity.class);
+			mIntent.putExtra("needShowHelp", true);
+			startActivity(mIntent);
 			break;
 		default:
 			break;
 		}
-    	getFons();
+//    	updateMenuUi();
 		return super.onOptionsItemSelected(item);
 	}
 

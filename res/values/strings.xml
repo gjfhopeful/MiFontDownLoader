@@ -3,6 +3,7 @@
 
     <string name="app_name">小米字体下载器</string>
     <string name="action_settings">刷新</string>
+    <string name="action_help">帮助</string>
     <string name="action_last">上一页</string>
     <string name="action_next">下一页</string>
     <string name="action_hot">最热</string>
@@ -21,11 +22,10 @@
         <item>进入我的主题，选择从SD卡导入主题包</item>
         <item>选择刚刚下载的主题，导入</item>
         <item>导入成功后进入混搭模式</item>
-        <item>进入混搭模式后选择字体</item>
-        <item>是不是有刚刚选择的字体，赶快试试吧</item>
+        <item>进入混搭模式后选择字体,是不是有刚刚选择的字体，赶快试试吧</item>
     </string-array>
     
-    <string name="help_notshow">不在显示！</string>
+    <string name="help_nervershow">不在显示！</string>
     <string name="help_sure">确定</string>
 
 </resources>
