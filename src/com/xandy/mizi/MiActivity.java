@@ -8,6 +8,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -44,6 +46,8 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 	private GridView mFontGridView = null;
 	private ImageLoader imageLoader = null;
 	DisplayImageOptions options;
+	
+	private ProgressBar mProgressBar = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,19 +72,28 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
         mFontAdapter = new FontAdapter();
         mFontGridView.setAdapter(mFontAdapter);
         mFontGridView.setOnItemClickListener(this);
+        
+        mProgressBar = (ProgressBar)findViewById(R.id.progressBar);
+        
         getFons();
+        
+        showConnectTip();
     }
     
     private int pageid = 1;
     private boolean isHot = true;
     public void getFons(){
+    	getFons(false);
+    }
+    public void getFons(final boolean isRefsh){
     	Thread httpThread = new Thread(new Runnable() {
     		@Override
     		public void run() {
     			log("start get font grid data");
+    			mHandler.sendEmptyMessage(GET_FONT_URL_START);
     			mFonts.clear();
     			mFonts = HttpTools.getFonts(pageid, isHot);
-    			mHandler.sendEmptyMessage(GET_FONT_URL);
+    			mHandler.sendEmptyMessage(isRefsh?GET_FONT_URL_START:GET_FONT_URL_END);
     		}
     	});
     	httpThread.start();
@@ -159,6 +172,9 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 			isHot = false;
 			getFons();
 			break;
+		case 104:
+			getFons(true);
+			break;
 		case 105:
 			Intent mIntent = new Intent(getApplicationContext(), HelpActivity.class);
 			mIntent.putExtra("needShowHelp", true);
@@ -223,25 +239,35 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
     
     
     private List<Font> mFonts = new ArrayList<Font>();
-    private final int GET_FONT_URL = 100000;
-    private final int DOWN_FONT_START = 100001;
-    private final int DOWN_FONT_END = 100002;
-    private final int DOWN_FONT_ERROR = 100003;
-    private final int DOWN_FONT_OK = 100004;
-    private final int SET_DETAIL_IMG = 100005;
-    private final int UPDATE_PROGRESSBAR = 100006;
+    private final int GET_FONT_URL_START = 100000;
+    private final int GET_FONT_URL_END = 100001;
+    private final int GET_FONT_URL_REFRSH = 100002;
+    private final int DOWN_FONT_START = 100011;
+    private final int DOWN_FONT_END = 100012;
+    private final int DOWN_FONT_ERROR = 100013;
+    private final int DOWN_FONT_OK = 100014;
+    private final int UPDATE_DOWN_FONT_PROGRESSBAR = 100021;
+    private final int SET_DETAIL_IMG = 100031;
     
     Handler mHandler = new Handler(){
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
-			case GET_FONT_URL:
+			case GET_FONT_URL_START:
+				mProgressBar.setVisibility(View.VISIBLE);
+				break;
+			case GET_FONT_URL_END:
+				mProgressBar.setVisibility(View.GONE);
+				mFontAdapter.notifyDataSetInvalidated();
+				break;
+			case GET_FONT_URL_REFRSH:
+				mProgressBar.setVisibility(View.GONE);
 				mFontAdapter.notifyDataSetChanged();
 				break;
 			case SET_DETAIL_IMG:
 				imageLoader.displayImage(msg.obj.toString(),fontDetail, options);
 				break;
-			case UPDATE_PROGRESSBAR:
+			case UPDATE_DOWN_FONT_PROGRESSBAR:
 				ProgressBar mBar = (ProgressBar) msg.obj;
 				mBar.setProgress(msg.getData().getInt("size"));
 				break;
@@ -302,6 +328,85 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 	
 	private void log(String logs){
 		Log.d(TAG,logs);
+	}
+	
+	public boolean isNetworkConnected(Context context) {  
+	    if (context != null) {  
+	        ConnectivityManager mConnectivityManager = (ConnectivityManager) context  
+	                .getSystemService(Context.CONNECTIVITY_SERVICE);  
+	        NetworkInfo mNetworkInfo = mConnectivityManager.getActiveNetworkInfo();  
+	        if (mNetworkInfo != null) {  
+	            return mNetworkInfo.isAvailable();  
+	        }  
+	    }  
+	    return false;  
+	}
+	
+	public boolean isWifiConnected(Context context) {  
+	    if (context != null) {  
+	        ConnectivityManager mConnectivityManager = (ConnectivityManager) context  
+	                .getSystemService(Context.CONNECTIVITY_SERVICE);  
+	        NetworkInfo mWiFiNetworkInfo = mConnectivityManager  
+	                .getNetworkInfo(ConnectivityManager.TYPE_WIFI);  
+	        if (mWiFiNetworkInfo != null) {  
+	            return mWiFiNetworkInfo.isAvailable();  
+	        }  
+	    }  
+	    return false;  
+	}
+	
+	public boolean isMobileConnected(Context context) {  
+	    if (context != null) {  
+	        ConnectivityManager mConnectivityManager = (ConnectivityManager) context  
+	                .getSystemService(Context.CONNECTIVITY_SERVICE);  
+	        NetworkInfo mMobileNetworkInfo = mConnectivityManager  
+	                .getNetworkInfo(ConnectivityManager.TYPE_MOBILE);  
+	        if (mMobileNetworkInfo != null) {  
+	            return mMobileNetworkInfo.isAvailable();  
+	        }  
+	    }  
+	    return false;  
+	}
+	private boolean isConnect = false;
+	private void showConnectTip(){
+		int tipId = R.string.connect_noconnect;
+		switch (getConnectState()) {
+		case 1:
+			tipId = R.string.connect_wifi;
+			isConnect = true;
+			break;
+		case 2:
+			tipId = R.string.connect_2g_3g;
+			isConnect = true;
+			break;
+		default:
+			tipId = R.string.connect_noconnect;
+			isConnect = false;
+			break;
+		}
+		Toast.makeText(mContext, getResources().getString(tipId), Toast.LENGTH_SHORT).show();
+		
+	}
+	
+	private int getConnectState(){
+		int state = 0;
+		if (mContext != null) {  
+	        ConnectivityManager mConnectivityManager = (ConnectivityManager) mContext  
+	                .getSystemService(Context.CONNECTIVITY_SERVICE);  
+	        NetworkInfo mNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_WIFI);  
+	        if (mNetworkInfo != null) {  
+	            if(mNetworkInfo.isAvailable()) {
+	            	state = 1;  
+	            }
+	            else {
+	            	mNetworkInfo = mConnectivityManager.getNetworkInfo(ConnectivityManager.TYPE_MOBILE);  
+	            	if (mNetworkInfo != null) {  
+	            		if(mNetworkInfo.isAvailable()) state = 2;;  
+	            	}	            	
+	            }
+	        }  
+		}
+		return state;
 	}
 	
 }

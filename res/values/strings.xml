@@ -16,6 +16,10 @@
     <string name="title_activity_help">HelpActivity</string>
     <string name="hello_world">Hello world!</string>
     
+    <string name="connect_noconnect">没有网络，无法下载！</string>
+    <string name="connect_wifi">正在使用WIFI高速下载!</string>
+    <string name="connect_2g_3g">您在使用2G/3G网络，请注意流量!</string>
+    
     <string-array name="help_string" >
         <item>进入程序后，点击自己喜欢的字体，根据提示下载</item>
         <item>下载完成后找到主题风格</item>
