@@ -1,4 +1,4 @@
-package com.xandy.mizi;
+package com.xandy.mifont;
 
 public class Font {
 	

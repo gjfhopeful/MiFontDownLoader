@@ -1,4 +1,4 @@
-package com.xandy.mizi;
+package com.xandy.mifont;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -34,6 +34,7 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+import com.xandy.mizi.R;
 import com.xandy.mizi.R.id;
 
 public class MiActivity extends Activity implements OnItemClickListener,OnClickListener{

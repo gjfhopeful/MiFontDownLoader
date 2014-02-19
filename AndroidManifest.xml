@@ -22,7 +22,7 @@
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
         <activity
-            android:name="com.xandy.mizi.HelpActivity"
+            android:name="com.xandy.mifont.HelpActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,7 +31,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.xandy.mizi.MiActivity"
+            android:name="com.xandy.mifont.MiActivity"
             android:label="@string/app_name" >
         </activity>
     </application>
