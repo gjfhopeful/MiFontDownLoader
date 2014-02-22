@@ -1,18 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="@dimen/font_grid_view_height"
+    android:background="@drawable/grid_view_bg"   >
     
     <ImageView
         android:id="@+id/font_pre"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/font_grid_view_image_height"
+        android:padding="@dimen/font_grid_view_margeen"
+        android:scaleType="fitCenter"
+        android:layout_centerHorizontal="true"
         android:src="@drawable/ic_launcher" />
     
     <TextView 
         android:id="@+id/font_name" 
+        android:text="tedfdst"
+        android:layout_below="@id/font_pre"
+        android:layout_centerHorizontal="true"
+        android:singleLine="true"
+        android:gravity="center_horizontal"
         android:layout_width="match_parent" 
-        android:layout_height="wrap_content" />
+        android:layout_height="@dimen/font_grid_view_font_height" />
     
 
 </RelativeLayout>

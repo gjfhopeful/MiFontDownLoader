@@ -9,9 +9,14 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
+import android.util.Log;
+
 
 
 public class HttpTools {
+	
+	private static boolean DEBUG = true;
+	private static final String TAG = "HttpTools";
 	
 	public static final String BaseURL = "http://zhuti.xiaomi.com";
 	public static final String FontURLSort = "&sort=";
@@ -34,7 +39,9 @@ public class HttpTools {
 		List<Font> mFont = new ArrayList<Font>();
 		Document doc = null;
 		try {
-			doc = Jsoup.connect(getFontURL(page, isHot)).get();
+			String url = getFontURL(page, isHot);
+			log(url);
+			doc = Jsoup.connect(url).get();
 			Element mMain = doc.getElementById("main");
 			Elements mElements = mMain.getElementsByTag("li");
 			int count = mElements.size();
@@ -46,6 +53,7 @@ public class HttpTools {
 				font.setFontName(Img.attr("alt"));
 				font.setFontImgURL(Img.attr("data-src"));
 				font.setFontURL(Url.attr("href"));
+				log(font.getFontDetail());
 				mFont.add(font);
 			}
 		} catch (IOException e) {
@@ -53,5 +61,25 @@ public class HttpTools {
 		}
 		
 		return mFont;
+	}
+	
+	public static String getFontDetailImgUrl(Font font){
+		String url = "";
+		Document doc = null;
+		try {
+			log(font.getFontDetail());
+//			doc = Jsoup.connect("http://zhuti.xiaomi.com/detail/af7ac489-e9f9-46a5-b534-89f073c921c8").get();
+			doc = Jsoup.connect(BaseURL + font.getFontURL() ).get();
+			Element mMain = doc.getElementById("main");
+			Element mElements = mMain.getElementsByAttributeValueStarting("id", "J_detail").first();
+			if(null != mElements) url = mElements.getElementsByTag("img").attr("src");
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return url;
+	}
+	
+	public static void log(String log){
+		if(DEBUG) Log.d(TAG, log);
 	}
 }

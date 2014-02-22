@@ -6,6 +6,10 @@ public class Font {
 	private String FontName;
 	private String FontImgURL;
 	
+	public String getFontDetail(){
+		return "name:" + FontName + " | img:"  + FontImgURL + " | download:" + FontURL;
+	}
+	
 	public void fixFontURL(){
 		FontURL = FontURL.replaceAll("detail", "download");
 	}
