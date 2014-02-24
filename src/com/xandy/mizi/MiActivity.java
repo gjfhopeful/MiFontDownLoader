@@ -19,7 +19,6 @@ import android.os.Message;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.app.AlertDialog.Builder;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -238,9 +237,9 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 	}
     
 	/**
-  	 * Ö÷Ïß³Ì(UIÏß³Ì)
-  	 * ¶ÔÓÚÏÔÊ¾¿Ø¼şµÄ½çÃæ¸üĞÂÖ»ÊÇÓÉUIÏß³Ì¸ºÔğ£¬Èç¹ûÊÇÔÚ·ÇUIÏß³Ì¸üĞÂ¿Ø¼şµÄÊôĞÔÖµ£¬¸üĞÂºóµÄÏÔÊ¾½çÃæ²»»á·´Ó³µ½ÆÁÄ»ÉÏ
-  	 * Èç¹ûÏëÈÃ¸üĞÂºóµÄÏÔÊ¾½çÃæ·´Ó³µ½ÆÁÄ»ÉÏ£¬ĞèÒªÓÃHandlerÉèÖÃ¡£
+  	 * ï¿½ï¿½ï¿½ß³ï¿½(UIï¿½ß³ï¿½)
+  	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾ï¿½Ø¼ï¿½ï¿½Ä½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö»ï¿½ï¿½ï¿½ï¿½UIï¿½ß³Ì¸ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú·ï¿½UIï¿½ß³Ì¸ï¿½ï¿½Â¿Ø¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½Âºï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½æ²»ï¿½á·´Ó³ï¿½ï¿½ï¿½ï¿½Ä»ï¿½ï¿½
+  	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã¸ï¿½ï¿½Âºï¿½ï¿½ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½æ·´Ó³ï¿½ï¿½ï¿½ï¿½Ä»ï¿½Ï£ï¿½ï¿½ï¿½Òªï¿½ï¿½Handlerï¿½ï¿½ï¿½Ã¡ï¿½
   	 * @param path
   	 * @param savedir
   	 */
@@ -249,20 +248,20 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
 			@Override
 			public void run() {
 				log("Strat downLoad " + path);
-				//¿ªÆô3¸öÏß³Ì½øĞĞÏÂÔØ
+				//ï¿½ï¿½ï¿½ï¿½3ï¿½ï¿½ï¿½ß³Ì½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 				File mFile = new File(savedir);
 				if(!mFile.exists()) mFile.mkdirs();
 				FileDownloader loader = new FileDownloader(mContext, path, new File(savedir), 3);
-				progressBar.setMax(loader.getFileSize());//ÉèÖÃ½ø¶ÈÌõµÄ×î´ó¿Ì¶ÈÎªÎÄ¼şµÄ³¤¶È
+				progressBar.setMax(loader.getFileSize());//ï¿½ï¿½ï¿½Ã½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ì¶ï¿½Îªï¿½Ä¼ï¿½ï¿½Ä³ï¿½ï¿½ï¿½
 				final Message msg = new Message();
 				msg.obj = progressBar;
 				try {
 					loader.download(new DownloadProgressListener() {
 						@Override
-						public void onDownloadSize(int size) {//ÊµÊ±»ñÖªÎÄ¼şÒÑ¾­ÏÂÔØµÄÊı¾İ³¤¶È
+						public void onDownloadSize(int size) {//ÊµÊ±ï¿½ï¿½Öªï¿½Ä¼ï¿½ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½Øµï¿½ï¿½ï¿½İ³ï¿½ï¿½ï¿½
 							msg.what = UPDATE_PROGRESSBAR;
 							msg.getData().putInt("size", size);
-							mHandler.sendMessage(msg);//·¢ËÍÏûÏ¢
+							mHandler.sendMessage(msg);//ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ï¢
 						}
 					});
 				} catch (Exception e) {

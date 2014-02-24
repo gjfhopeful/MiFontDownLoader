@@ -15,6 +15,8 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class HelpActivity extends Activity implements OnClickListener,OnPageChangeListener{
 	
@@ -30,6 +32,12 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 		R.drawable.h5,
 		R.drawable.h6
 	};
+	
+//	image points  
+    private ImageView[] imageViews;   
+//  navi layout viewgroup  
+    private LinearLayout viewPoints;  
+    private String[] mHelpTips;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -37,17 +45,33 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 		setContentView(R.layout.activity_help);
 		
 		mHelps = new ArrayList<ImageView>();
+		imageViews = new ImageView[helpSrcId.length];	
+		viewPoints = (LinearLayout) findViewById(R.id.viewPoints);
+		mHelpTips = getResources().getStringArray(R.array.help_string);
+		LinearLayout.LayoutParams mLayoutParams = new LinearLayout.LayoutParams(10, 10);
+		mLayoutParams.setMargins(2, 0, 2, 0);
 		for(int i = 0 ; i < helpSrcId.length ; i++){
 			ImageView img = new ImageView(this);
 			img.setImageResource(helpSrcId[i]);
 			mHelps.add(img);
+			
+			ImageView point = new ImageView(this);  
+			point.setLayoutParams(mLayoutParams);  
+			point.setPadding(5, 0, 5, 0);
+			point.setBackgroundResource((R.drawable.circle_ucimg));
+			if( 0 == i) point.setBackgroundResource((R.drawable.circle_cimg));
+            imageViews[i] = point;
+            viewPoints.addView(imageViews[i]);
 		}
 		
 		mViewPager = (ViewPager) findViewById(R.id.help);
 		mViewPager.setAdapter(new MPageAdapter());
+		mViewPager.setOnPageChangeListener(this);
 		mCheckBox = (CheckBox) findViewById(R.id.notshow);
 		mButton = (Button) findViewById(R.id.next);
 		mButton.setOnClickListener(this);
+		
+		viewPoints = (LinearLayout) findViewById(R.id.viewPoints);
 	}
 
 	@Override
@@ -72,7 +96,6 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 		@Override  
 		public Object instantiateItem(ViewGroup container, int position) {  //这个方法用来实例化页卡         
 	    	container.addView(mHelps.get(position), 0);//添加页卡  
-	    	mCheckBox.setVisibility( position == mHelps.size() ? View.VISIBLE : View.GONE);
 	    	return mHelps.get(position);  
 	 	}  
 
@@ -85,26 +108,30 @@ public class HelpActivity extends Activity implements OnClickListener,OnPageChan
 
 	@Override
 	public void onClick(View v) {
-		// TODO Auto-generated method stub
 		finish();
 	}
 
 	@Override
 	public void onPageScrollStateChanged(int arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onPageScrolled(int arg0, float arg1, int arg2) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void onPageSelected(int arg0) {
-		// TODO Auto-generated method stub
-		
+	public void onPageSelected(int position) {
+		mCheckBox.setVisibility( position == mHelps.size()-1 ? View.VISIBLE : View.GONE);
+		mButton.setVisibility( position == mHelps.size()-1 ? View.VISIBLE : View.GONE);
+		Toast.makeText(getApplicationContext(), mHelpTips[position], Toast.LENGTH_SHORT).show();
+		for (int i = 0; i < mHelps.size(); i++) {  
+        	ImageView img = imageViews[i];
+        	img.setBackgroundResource((R.drawable.circle_ucimg));
+			if( position == i) img.setBackgroundResource((R.drawable.circle_cimg));
+        }
+		viewPoints.setVisibility( position == mHelps.size()-1 ? View.GONE : View.VISIBLE);
 	}
 
 }
