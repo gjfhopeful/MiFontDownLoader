@@ -34,8 +34,7 @@ import android.widget.Toast;
 import com.nostra13.universalimageloader.core.DisplayImageOptions;
 import com.nostra13.universalimageloader.core.ImageLoader;
 import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
-import com.xandy.mizi.R;
-import com.xandy.mizi.R.id;
+import com.xandy.mifont.R;
 
 public class MiActivity extends Activity implements OnItemClickListener,OnClickListener{
 	
@@ -90,6 +89,7 @@ public class MiActivity extends Activity implements OnItemClickListener,OnClickL
     	Thread httpThread = new Thread(new Runnable() {
     		@Override
     		public void run() {
+    			Font.refreshFontData(Font.getFontURL(Font.getFonts().size()));
     			log("start get font grid data");
     			mHandler.sendEmptyMessage(GET_FONT_URL_START);
     			mFonts.clear();

@@ -3,7 +3,7 @@ package com.xandy.mifont;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.xandy.mizi.R;
+import com.xandy.mifont.R;
 
 import android.app.Activity;
 import android.content.Intent;
