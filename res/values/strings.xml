@@ -28,7 +28,7 @@
         <item>进入混搭模式后选择字体,是不是有刚刚选择的字体，赶快试试吧</item>
     </string-array>
 
-    <string name="help_nervershow">不在显示！</string>
+    <string name="help_nervershow">不再显示！</string>
     <string name="help_sure">确定</string>
     <string name="title_activity_test">TestActivity</string>
 

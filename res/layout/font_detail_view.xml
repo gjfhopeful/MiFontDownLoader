@@ -6,18 +6,18 @@
     android:layout_marginRight="@dimen/font_grid_view_margeen" >
     
     <ImageView 
-        android:id="@+id/font_detail_icon"
+        android:id="@+id/font_detail_image"
         android:layout_width="match_parent"
         android:layout_height="@dimen/font_detail_view_image_height"
         android:src="@drawable/ic_launcher" />
 
     <Button
-        android:id="@+id/down"
+        android:id="@+id/font_down"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentLeft="true"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/font_detail_icon"
-        android:text="Button" />
+        android:layout_below="@+id/font_detail_image"
+        android:text="@string/font_start_download" />
 
 </RelativeLayout>

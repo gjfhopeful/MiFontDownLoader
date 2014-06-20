@@ -16,6 +16,10 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import android.util.JsonReader;
 import android.util.Log;
@@ -23,33 +27,29 @@ import android.util.Log;
 public class Font {
 	
 	public static final String FontBaseURL = "http://m.zhuti.xiaomi.com/api/subject/index";
-	public static final String FontDetailBseURL = "http://m.zhuti.xiaomi.com/detail/";
 	public static final String INFO = "category=Font&start=mIndex&count=mCount&device=aries&apk=100";
+
+	public static final String FrontCoverBase = "http://t1.market.xiaomi.com/thumbnail/jpeg/w286/";
+	public static final String FontDownloadBaseURL = "http://zhuti.xiaomi.com/download/";
+	public static final String FontDetailBaseURL = "http://m.zhuti.xiaomi.com/detail/";
 	
 	public static final String mIndex = "mIndex";
 	public static final String mCount = "mCount";
-	
-	
-	public static final String FrontCoverBase = "http://t1.market.mi-img.com/thumbnail/jpeg/w286/";
 	
 	private static String FrontCover = "frontCover";
 	private static String ModuleId = "moduleId";
 	private static String Name = "name";
 	private static String FileSize = "fileSize";
 	
-	
 	private static boolean isEnd = false;
-	private static List<Font> mFonts = new ArrayList<Font>();
-	
 	public static boolean isEnd(){
 		return isEnd;
 	}
-	
+		
+	private static List<Font> mFonts = new ArrayList<Font>();
 	public static List<Font> getFonts(){
-		Log.d("wang", mFonts.size()+"\n");
 		return mFonts;
 	}
-	
 	public static void resetFonts(){
 		mFonts.clear();
 	}
@@ -60,12 +60,18 @@ public class Font {
 	private String mName = "";
 	private int mFileSize = 0;
 	
+	private String mDetailImg = "";
+	
 	public String getFontCover(){
 		return FrontCoverBase + mFrontCover;
 	}
 	
+	public String getFontDownLoadUrl(){
+		return FontDownloadBaseURL + mModuleId;
+	}
+	
 	public String getFontDetailURL(){
-		return FontDetailBseURL + mModuleId;
+		return FontDetailBaseURL + mModuleId;
 	}
 	
 	public String getFontDetailName(){
@@ -77,8 +83,12 @@ public class Font {
 	}
 	
 	
+	
 	public static void refreshFontData(String strUrl) { 
 		Log.d("wang", strUrl);
+		if(isEnd){
+			return ;
+		}
 		// HttpGet对象 
 		HttpGet httpRequest = new HttpGet(strUrl); 
 		String strResult = ""; 
@@ -90,7 +100,6 @@ public class Font {
 			if (httpResponse.getStatusLine().getStatusCode() == HttpStatus.SC_OK) { 
 				// 取得返回的数据 
 				strResult = EntityUtils.toString(httpResponse.getEntity()); 
-				
 				List<Font> fonts = getFonts(strResult);
 				if(fonts.size() == 0){
 					isEnd = true;
@@ -126,7 +135,6 @@ public class Font {
 		}
 		return mFonts;
 	}
-	
 	
 	private void updateFontInfo(JSONObject font){
 		try {
@@ -182,12 +190,17 @@ public class Font {
 	
 	
 	public String toString(){
-		return " Name = " + mName + "  FileSize = " + mFileSize;
+		return " Name = " + mName + "  FileSize = " + mFileSize + 
+				" FrontCover = " + mFrontCover + " ModuleId" + mModuleId ;
 	}
 	
 	
 	public static String getFontURL(int index ){
-		return getFontURL(index,8);
+		int count = 10;
+		if(0 == index){
+			count = 20;
+		}
+		return getFontURL(index,count);
 	}
 	
 	public static String getFontURL(int index ,int count){
@@ -202,49 +215,24 @@ public class Font {
 		return FontBaseURL + "?" + mInfo;
 	}
 	
-	private String FontURL = "";
-	private String FontName = "";
-	private String FontImgURL = "";
-	private boolean isDownLoading = false;
-	
-	public String getFontDetailString(){
-		return "name:" + FontName + " | img:"  + FontImgURL + " | download:" + FontURL;
+	public boolean refreshDetailImgUrl(){
+		Document doc = null;
+		try {
+			doc = Jsoup.connect( getFontDetailURL() ).get();
+			Elements mDivClass = doc.getElementsByClass("blockinfo");
+			Element mImage = mDivClass.first();
+			if(null != mImage) mDetailImg = mImage.getElementsByTag("img").attr("src");
+//			Log.d("wang", "url = " + url);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return false;
+		}
+		return true;
+		
 	}
 	
-	public void fixFontURL(){
-		FontURL = FontURL.replaceAll("detail", "download");
-	}
-
-	public String getFontURL() {
-		return FontURL;
-	}
-
-	public void setFontURL(String fontURL) {
-		FontURL = fontURL;
-	}
-
-	public String getFontName() {
-		return FontName;
-	}
-
-	public void setFontName(String fontName) {
-		FontName = fontName;
-	}
-
-	public String getFontImgURL() {
-		return FontImgURL;
-	}
-
-	public void setFontImgURL(String fontImgURL) {
-		FontImgURL = fontImgURL;
-	}
-
-	public boolean isDownLoading() {
-		return isDownLoading;
-	}
-
-	public void setDownLoading(boolean isDownLoading) {
-		this.isDownLoading = isDownLoading;
+	public String getFontDetailImgUrl(){
+		return mDetailImg;
 	}
 	
 }
